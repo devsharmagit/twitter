@@ -23,12 +23,18 @@ type PostWithDetails = PostType & {
       rePosts: number;
       comments: number;
     };
+    likes: { id: number }[];
+    reposts: { id: number }[];
+    saves: { id: number }[];
   };
   _count: {
     likes: number;
     rePosts: number;
     comments: number;
   };
+  likes: { id: number }[];
+  reposts: { id: number }[];
+  saves: { id: number }[];
 };
 
 interface PostPropTypes {
@@ -80,7 +86,10 @@ const Post = ({ type, post }: PostPropTypes) => {
         <div className="flex-1 flex flex-col gap-2">
           {/* TOP */}
           <div className="w-full flex justify-between">
-            <Link href={`/lamaWebDev`} className="flex gap-4">
+            <Link
+              href={`/${originalPost.user.username}`}
+              className="flex gap-4"
+            >
               <div
                 className={`${
                   type !== "status" && "hidden"
@@ -143,7 +152,12 @@ const Post = ({ type, post }: PostPropTypes) => {
           {type === "status" && (
             <span className="text-textGray">8:41 PM · Dec 5, 2024</span>
           )}
-          <PostInteraction count={originalPost._count} />
+          <PostInteraction
+            count={originalPost._count}
+            isLiked={!!originalPost.likes?.length}
+            isReposted={!!originalPost.reposts?.length}
+            isSaved={!!originalPost.saves?.length}
+          />
         </div>
       </div>
     </div>

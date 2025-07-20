@@ -39,12 +39,16 @@ const Feed = async ({ userProfileId }: { userProfileId?: string }) => {
             select: { likes: true, comments: true, rePosts: true },
           },
           likes: { where: { userId: userId }, select: { id: true } },
+          rePosts: { where: { userId: userId }, select: { id: true } },
+          saves: { where: { userId: userId }, select: { id: true } },
         },
       },
       _count: {
         select: { likes: true, comments: true, rePosts: true },
       },
       likes: { where: { userId: userId }, select: { id: true } },
+      rePosts: { where: { userId: userId }, select: { id: true } },
+      saves: { where: { userId: userId }, select: { id: true } },
     },
   });
   console.log("###################################");

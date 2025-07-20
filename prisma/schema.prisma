@@ -9,9 +9,9 @@ datasource db {
 }
 
 model User {
-  id          String  @id
-  email       String  @unique
-  username    String  @unique
+  id          String   @id
+  email       String   @unique
+  username    String   @unique
   name        String?
   displayName String?
   bio         String?
@@ -20,13 +20,14 @@ model User {
   website     String?
   img         String?
   cover       String?
+  createAt    DateTime @default(now())
 
   // realtions
-  posts Post[]
-  likes Like[]
-  saves SavedPost[]
-  followers Follow[] @relation("UserFollowers")
-  followings Follow[] @relation("UserFollowings")
+  posts      Post[]
+  likes      Like[]
+  saves      SavedPost[]
+  followers  Follow[]    @relation("UserFollowers")
+  followings Follow[]    @relation("UserFollowings")
 }
 
 model Post {
@@ -49,19 +50,18 @@ model Post {
 
   // comment posts
   parentPostId Int?
-  parentPost Post? @relation("CommentPosts", fields: [parentPostId], references: [id])
-  comments  Post[] @relation("CommentPosts")
+  parentPost   Post?  @relation("CommentPosts", fields: [parentPostId], references: [id])
+  comments     Post[] @relation("CommentPosts")
 
   // like posts
   likes Like[]
 
   // saved posts
   saves SavedPost[]
-
 }
 
 model Like {
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
   // relations
@@ -73,7 +73,7 @@ model Like {
 }
 
 model SavedPost {
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
   // relations
@@ -85,15 +85,13 @@ model SavedPost {
 }
 
 model Follow {
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
   // relations
-  followerId String
+  followerId  String
   followingId String
 
-  follower User @relation("UserFollowers",fields: [followerId], references: [id])
-  following User @relation("UserFollowings",fields: [followingId], references: [id])
-
-  
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id])
+  following User @relation("UserFollowings", fields: [followingId], references: [id])
 }
