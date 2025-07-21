@@ -1,6 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import Image from "./Image";
+import Socket from "./Socket";
+import Notification from "./Notification";
+import { currentUser } from "@clerk/nextjs/server";
 
 const menuList = [
   {
@@ -15,12 +18,12 @@ const menuList = [
     link: "/",
     icon: "explore.svg",
   },
-  {
-    id: 3,
-    name: "Notification",
-    link: "/",
-    icon: "notification.svg",
-  },
+  // {
+  //   id: 3,
+  //   name: "Notification",
+  //   link: "/",
+  //   icon: "notification.svg",
+  // },
   {
     id: 4,
     name: "Messages",
@@ -65,7 +68,8 @@ const menuList = [
   },
 ];
 
-const LeftBar = () => {
+const LeftBar = async () => {
+  const user = await currentUser();
   return (
     <div className="h-screen sticky top-0 flex flex-col justify-between pt-2 pb-8">
       {/* Logo menu button */}
@@ -77,20 +81,26 @@ const LeftBar = () => {
 
         {/* menu list */}
         <div className="flex flex-col gap-4">
-          {menuList.map((item) => (
-            <Link
-              href={item.link}
-              key={item.id}
-              className="p-2 rounded-full hover:bg-[#181818] flex items-center gap-4"
-            >
-              <Image
-                path={`icons/${item.icon}`}
-                alt={item.name}
-                width={24}
-                height={24}
-              />
-              <span className="hidden xxl:inline"> {item.name} </span>
-            </Link>
+          {menuList.map((item, i) => (
+            <div key={item.id || i}>
+              {i === 2 && user && (
+                <div>
+                  <Notification />
+                </div>
+              )}
+              <Link
+                href={item.link}
+                className="p-2 rounded-full hover:bg-[#181818] flex items-center gap-4"
+              >
+                <Image
+                  path={`icons/${item.icon}`}
+                  alt={item.name}
+                  width={24}
+                  height={24}
+                />
+                <span className="hidden xxl:inline">{item.name}</span>
+              </Link>
+            </div>
           ))}
         </div>
         {/* button */}
@@ -111,6 +121,7 @@ const LeftBar = () => {
         >
           Post
         </Link>
+        <Socket />
       </div>
 
       {/* User section  */}
