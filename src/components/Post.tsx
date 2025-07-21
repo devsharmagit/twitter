@@ -24,7 +24,7 @@ type PostWithDetails = PostType & {
       comments: number;
     };
     likes: { id: number }[];
-    reposts: { id: number }[];
+    rePosts: { id: number }[];
     saves: { id: number }[];
   };
   _count: {
@@ -33,7 +33,7 @@ type PostWithDetails = PostType & {
     comments: number;
   };
   likes: { id: number }[];
-  reposts: { id: number }[];
+  rePosts: { id: number }[];
   saves: { id: number }[];
 };
 
@@ -43,12 +43,12 @@ interface PostPropTypes {
 }
 
 const Post = ({ type, post }: PostPropTypes) => {
-  const originalPost = post.rePost || post;
+  const originalPost = post?.rePost || post;
 
   return (
     <div className="p-4 border-y-[1px] border-borderGray">
       {/* POST TYPE */}
-      {post.rePostId && (
+      {post?.rePostId && (
         <div className="flex items-center gap-2 text-sm text-textGray mb-2 from-bold">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +74,7 @@ const Post = ({ type, post }: PostPropTypes) => {
           } relative w-10 h-10 rounded-full overflow-hidden`}
         >
           <Image
-            path={originalPost.user.img || "general/noAvatar.png"}
+            path={originalPost?.user.img || "general/noAvatar.png"}
             alt=""
             width={100}
             height={100}
@@ -126,7 +126,9 @@ const Post = ({ type, post }: PostPropTypes) => {
             <PostInfo />
           </div>
           {/* TEXT & MEDIA */}
-          <Link href={`/lamaWebDev/status/123`}>
+          <Link
+            href={`/${originalPost.user.username}/status/${originalPost.id}`}
+          >
             <p className={`${type === "status" && "text-lg"}`}>
               {originalPost.desc}
             </p>
@@ -155,8 +157,9 @@ const Post = ({ type, post }: PostPropTypes) => {
           <PostInteraction
             count={originalPost._count}
             isLiked={!!originalPost.likes?.length}
-            isReposted={!!originalPost.reposts?.length}
+            isReposted={!!originalPost.rePosts?.length}
             isSaved={!!originalPost.saves?.length}
+            postId={originalPost.id}
           />
         </div>
       </div>

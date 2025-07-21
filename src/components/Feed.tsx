@@ -51,8 +51,6 @@ const Feed = async ({ userProfileId }: { userProfileId?: string }) => {
       saves: { where: { userId: userId }, select: { id: true } },
     },
   });
-  console.log("###################################");
-  console.log(posts[0]);
 
   return (
     <div>
