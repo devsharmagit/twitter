@@ -134,7 +134,12 @@ const Post = ({ type, post }: PostPropTypes) => {
             </p>
           </Link>
           {post.img && (
-            <Image path={post.img} alt="" width={600} height={600} />
+            <Image
+              path={post.img}
+              alt=""
+              width={600}
+              height={post.imgHeight || 600}
+            />
           )}
           {/* AFTER FETCHING THE POST MEDIA */}
           {/* {fileDetails && fileDetails.fileType === "image" ? (

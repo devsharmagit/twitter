@@ -30,6 +30,7 @@ const StatusPage = async ({
       rePosts: { where: { userId: userId }, select: { id: true } },
       saves: { where: { userId: userId }, select: { id: true } },
       comments: {
+        orderBy: { createAt: "desc" },
         include: {
           user: { select: { displayName: true, username: true, img: true } },
           _count: {

@@ -1,6 +1,11 @@
+"use client";
+
 import { Post as PostTyle } from "@/generated/prisma";
 import Image from "./Image";
 import Post from "./Post";
+import { useUser } from "@clerk/nextjs";
+import { useActionState } from "react";
+import { commentPost } from "@/actions";
 
 type CommentWithDetails = PostTyle & {
   user: {
@@ -25,27 +30,52 @@ interface CommentPropType {
 }
 
 const Comments = ({ comments, postId, username }: CommentPropType) => {
+  const { isLoaded, isSignedIn, user } = useUser();
+
+  const [state, formAction, isPending] = useActionState(commentPost, {
+    success: false,
+    error: false,
+  });
+
   return (
     <div className="">
-      <form className="flex items-center justify-between gap-4 p-4 ">
-        <div className="relative w-10 h-10 rounded-full overflow-hidden">
-          <Image
-            path="general/avatar.png"
-            alt="Lama Dev"
-            width={100}
-            height={100}
-            tr={true}
+      {user && (
+        <form
+          action={formAction}
+          className="flex items-center justify-between gap-4 p-4 "
+        >
+          <div className="relative w-10 h-10 rounded-full overflow-hidden">
+            <Image
+              src={user.imageUrl}
+              alt="Lama Dev"
+              width={100}
+              height={100}
+              tr={true}
+            />
+          </div>
+          <input
+            type="text"
+            name="desc"
+            className="flex-1 bg-transparent outline-none p-2 text-xl"
+            placeholder="Post your reply"
           />
-        </div>
-        <input
-          type="text"
-          className="flex-1 bg-transparent outline-none p-2 text-xl"
-          placeholder="Post your reply"
-        />
-        <button className="py-2 px-4 font-bold bg-white text-black rounded-full">
-          Reply
-        </button>
-      </form>
+          <input type="number" name="postId" hidden readOnly value={postId} />
+          <input
+            type="string"
+            name="username"
+            hidden
+            readOnly
+            value={username}
+          />
+          <button
+            disabled={isPending}
+            className="py-2 px-4 font-bold bg-white text-black rounded-full disabled:cursor-not-allowed disabled:bg-gray-200"
+          >
+            {isPending ? "Replying" : "Reply"}
+          </button>
+        </form>
+      )}
+      {state.error && <p className="text-red-400">Something went wrong.</p>}
       {comments.map((comment) => {
         return (
           <div key={comment.id}>

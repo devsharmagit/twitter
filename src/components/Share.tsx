@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useActionState, useEffect, useRef, useState } from "react";
 import Image from "./Image";
-import { shareAction } from "@/actions";
+import { addPost } from "@/actions";
 import NextImage from "next/image";
 import ImageEditor from "./ImageEditor";
+import { useUser } from "@clerk/nextjs";
 
 const Share = () => {
   const [media, setMedia] = useState<File | null>(null);
@@ -25,15 +26,30 @@ const Share = () => {
 
   const prevUrl = media ? URL.createObjectURL(media) : null;
 
+  const { user } = useUser();
+
+  const [state, formAction, isPending] = useActionState(addPost, {
+    success: false,
+    error: false,
+  });
+
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (state.success) {
+      if (formRef.current) formRef.current.reset();
+      setMedia(null);
+      setIsEditorOpen(false);
+      setSettings({ type: "original", sensitive: false });
+    }
+  }, [state]);
+
   return (
-    <form
-      className="p-4 flex gap-4"
-      action={(formData) => shareAction(formData, settings)}
-    >
+    <form className="p-4 flex gap-4" action={formAction} ref={formRef}>
       {/* avatar */}
       <div className="relative rounded-full w-10 h-10 overflow-hidden">
         <Image
-          path="general/avatar.png"
+          src={user?.imageUrl}
           alt="avatar"
           width={100}
           height={100}
@@ -42,6 +58,20 @@ const Share = () => {
       </div>
       {/* input section */}
       <div className="flex-1 flex flex-col gap-4">
+        <input
+          type="string"
+          name="imgType"
+          value={settings.type}
+          hidden
+          readOnly
+        />
+        <input
+          type="text"
+          name="isSensitive"
+          value={settings.sensitive ? "true" : "false"}
+          hidden
+          readOnly
+        />
         <input
           name="desc"
           type="text"
@@ -151,10 +181,14 @@ const Share = () => {
               className="cursor-pointer"
             />
           </div>
-          <button className="bg-white text-black font-bold rounded-full py-2 px-4">
-            post
+          <button
+            className="bg-white text-black font-bold rounded-full py-2 px-4 disabled:cursor-not-allowed disabled:bg-gray-200"
+            disabled={isPending}
+          >
+            {isPending ? "Posting" : "Post"}
           </button>
         </div>
+        {state.error && <p className="text-red-400">something went wrong.</p>}
       </div>
     </form>
   );

@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import { followUser } from "@/actions";
+import { useUser } from "@clerk/nextjs";
+import React, { useOptimistic, useState } from "react";
 
 const FollowButton = ({
   isFollowed,
@@ -9,10 +11,27 @@ const FollowButton = ({
   isFollowed: boolean;
   userId: string;
 }) => {
+  const [state, setState] = useState(isFollowed);
+
+  // const { user } = useUser();
+
+  const [optimisticFollow, switchOptimisticFollow] = useOptimistic(
+    state,
+    (prev) => !prev
+  );
+
+  const followAction = async () => {
+    switchOptimisticFollow("");
+    await followUser(userId);
+    setState((prev) => !prev);
+  };
+
   return (
-    <button className="py-2 px-4 bg-white text-black font-bold rounded-full">
-      {isFollowed ? "Unfollow" : "Follow"}
-    </button>
+    <form action={followAction}>
+      <button className="py-2 px-4 bg-white text-black font-bold rounded-full">
+        {optimisticFollow ? "Unfollow" : "Follow"}
+      </button>
+    </form>
   );
 };
 
