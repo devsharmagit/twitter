@@ -1,9 +1,6 @@
 import Link from "next/link";
 import React from "react";
 import Image from "./Image";
-import Socket from "./Socket";
-import Notification from "./Notification";
-import { currentUser } from "@clerk/nextjs/server";
 
 const menuList = [
   {
@@ -18,12 +15,12 @@ const menuList = [
     link: "/",
     icon: "explore.svg",
   },
-  // {
-  //   id: 3,
-  //   name: "Notification",
-  //   link: "/",
-  //   icon: "notification.svg",
-  // },
+  {
+    id: 3,
+    name: "Notification",
+    link: "/",
+    icon: "notification.svg",
+  },
   {
     id: 4,
     name: "Messages",
@@ -69,7 +66,6 @@ const menuList = [
 ];
 
 const LeftBar = async () => {
-  const user = await currentUser();
   return (
     <div className="h-screen sticky top-0 flex flex-col justify-between pt-2 pb-8">
       {/* Logo menu button */}
@@ -83,11 +79,7 @@ const LeftBar = async () => {
         <div className="flex flex-col gap-4">
           {menuList.map((item, i) => (
             <div key={item.id || i}>
-              {i === 2 && user && (
-                <div>
-                  <Notification />
-                </div>
-              )}
+              
               <Link
                 href={item.link}
                 className="p-2 rounded-full hover:bg-[#181818] flex items-center gap-4"
@@ -121,7 +113,7 @@ const LeftBar = async () => {
         >
           Post
         </Link>
-        <Socket />
+        
       </div>
 
       {/* User section  */}
