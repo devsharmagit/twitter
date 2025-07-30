@@ -6,7 +6,11 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-const UserPage = async ({ params }: { params: { username: string } }) => {
+const UserPage = async ({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) => {
   const { username } = await params;
 
   const { userId } = await auth();
